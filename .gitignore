@@ -131,3 +131,6 @@ dist
 .yarn/build-state.yml
 .yarn/
 .pnp.*
+
+# Sample Build
+react-frontend/build
