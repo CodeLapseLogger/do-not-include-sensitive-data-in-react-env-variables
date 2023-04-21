@@ -1,11 +1,16 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
+import NewsFeedItem from "./NewsFeedItem";
+
+import styles from "./NewsFeed.module.css";
 
 const NewsFeed = (props) => {
-  const newsAPIKey = process.env.REACT_APP_NEWS_API_KEY;
-  console.log(`News API Key: ${newsAPIKey}`);
+  // const newsAPIKey = process.env.REACT_APP_NEWS_API_KEY;
 
   const [newsData, setNewsData] = useState([]);
-  const newsAPIUrl = `https://newsapi.org/v2/top-headlines?country=in&category=general`;
+  const [apiRequestError, setAPIRequestError] = useState("");
+
+  // const newsAPIUrl = `https://newsapi.org/v2/top-headlines?country=in&category=general`;
+  const newsAPIUrl = `http://localhost:3001/news-data`;
 
   const newsAPIRequestOptions = useMemo(
     () => ({
@@ -14,52 +19,46 @@ const NewsFeed = (props) => {
       headers: {
         // "Content-Type": "application/json",
         // "Access-Control-Allow-Origin": "newsapi.org",
-        "X-Api-Key": newsAPIKey,
+        // "X-Api-Key": newsAPIKey,
       },
     }),
-    [newsAPIKey]
+    [
+      /*newsAPIKey*/
+    ]
   );
 
   const fetchNewsData = useCallback(async () => {
-    const newsAPIResponse = await fetch(newsAPIUrl, newsAPIRequestOptions);
+    // const newsAPIResponse = await fetch(newsAPIUrl, newsAPIRequestOptions);
+    const newsAPIResponse = await fetch(newsAPIUrl);
+
+    const newsAPIResponseData = await newsAPIResponse.json();
     if (newsAPIResponse.ok) {
-      const newsAPIResponseData = await newsAPIResponse.json();
       const newsArticlesData = newsAPIResponseData.articles;
-      console.log(`News article data: ${JSON.stringify(newsArticlesData)}`);
+
       setNewsData(newsArticlesData);
+      setAPIRequestError("");
+    } else {
+      const errorMessage = newsAPIResponseData.message;
+      // const errorMessage = newsAPIResponse.error;
+      setAPIRequestError(errorMessage);
     }
-  }, [newsAPIUrl, newsAPIRequestOptions]);
+  }, [newsAPIUrl /*, newsAPIRequestOptions*/]);
 
   useEffect(() => {
     fetchNewsData();
   }, [fetchNewsData]);
 
   return (
-    <div>
-      <ul>
+    <div className={styles.newsFeedContainer}>
+      <h3 className={styles.newsFeedHeading}>News Headlines</h3>
+      {apiRequestError ?? <p>Error with News API request: {apiRequestError}</p>}
+      <ul className={styles.newsFeed}>
         {newsData.map((singleNewsArticleData) => {
           return (
-            <li
+            <NewsFeedItem
               key={`${singleNewsArticleData.author}: ${singleNewsArticleData.title}`}
-            >
-              <p>Source: {singleNewsArticleData.source.name}</p>
-              <p>Author: {singleNewsArticleData.author}</p>
-              <p>Title: {singleNewsArticleData.title}</p>
-              <p>Description: {singleNewsArticleData.description}</p>
-              <p>Published At: {singleNewsArticleData.publishedAt}</p>
-              <img
-                src={singleNewsArticleData.urlToImage}
-                alt={`for article titled ${singleNewsArticleData.title}`}
-              />
-              <a
-                href={singleNewsArticleData.url}
-                target="_blank"
-                rel="noreferrer"
-              >
-                Read Full Article
-              </a>
-              <hr />
-            </li>
+              itemData={singleNewsArticleData}
+            />
           );
         })}
       </ul>
