@@ -1,23 +1,29 @@
-# Getting Started with Create React App
+# Do not include sensitive information in React environment variables
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This React project is a simple #newsapp created to demonstrate the associated
+risk of exposure with any sensitive information, like an API Key of a third-party
+API, stored in React environment variables.
 
-## Available Scripts
+It has been built as part of a YouTube video that discusses the same and suggests a safer way for a React app to communicate with a third-party API. Here is the link if you are interested: [This is why sensitive information (like API Key) SHOULD NOT be added to React environment variables](https://youtu.be/40R9c0dctnE).
 
-In the project directory, you can run:
+For demonstration purposes, the chosen third-party API is [News API](https://newsapi.org/). The app has React fron-end and Express.js back-end, where having a back-end is
+the safer way to talk to third-party APIs using an API key for authenticating/authorizing requests.
 
-### `npm start`
+## React Front-End
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+It has the components, NewsFeed, NewsFeedItem to make the request for data, be it
+directly to News API end-point (unsafe way) or Express.js server end-point (safe way),
+get the news data and display it.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+The heavy lifting of making the request and extracting data is done by NewsFeed component and the NewsFeedItem component is purely presentational without anu managed state.
 
-### `npm test`
+Also, committed code to NewsFeed component talks to Express.js server, which is the preferred way and the lines of code that directly make the request to News API (unsafe) have been commented out.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+If you would like to try out the code do fork the repo and if you would like to know
+which lines of code to comment and uncomment, do check out the referred YouTube video
+at the top.
+
+Below are the terminal commands to create a production build and start a front-end instance of the same:
 
 ### `npm run build`
 
@@ -29,42 +35,19 @@ Your app is ready to be deployed!
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-### `npm run eject`
+### `serve -s build`
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Runs the app through the created production build.\
+Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Express Back-End
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+The express back-end has the code to set-up the Express server and handle requests from the React front-end in server.js. The server is set to listen for requests on port 3001 and required packages: axios (make requests to News API end-point), cors (enable cross-origin request handling), dotenv (extract News API key from environment variable) have been installed and imported.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+Appropriate request handling logic has been implemented to send successful JSON news data response (status 200) to front-end, when request to News API succeeds and an unsuccessful JSON response (status 500) with an error message.
 
-## Learn More
+Below is the command to start the express server, whose start script is mapped in the package.json file:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### `npm start`
 
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Runs the nodemon server on port 3001 of localhost - http://localhost:3001
